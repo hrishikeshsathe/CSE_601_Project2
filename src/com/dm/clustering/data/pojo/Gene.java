@@ -22,6 +22,7 @@ public class Gene {
 
     /**
      * Set the groundTruth for the gene
+     *
      * @param groundTruth groundTruth for the gene
      */
     public void setGroundTruth(int groundTruth) {
@@ -37,6 +38,7 @@ public class Gene {
 
     /**
      * Set the clusterID for the gene
+     *
      * @param clusterID clusterID for the gene
      */
     public void setClusterID(int clusterID) {
@@ -52,6 +54,7 @@ public class Gene {
 
     /**
      * Set the geneID for the gene
+     *
      * @param geneID geneID for the gene
      */
     public void setGeneID(int geneID) {
@@ -67,6 +70,7 @@ public class Gene {
 
     /**
      * Set the gene expression values for the gene
+     *
      * @param geneExpValues list of gene expression values
      */
     public void setGeneExpValues(ArrayList<Double> geneExpValues) {

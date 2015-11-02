@@ -15,6 +15,7 @@ public class KMeans {
 
     /**
      * Execute the KMeans algorithm using KMeans++ for initial centroid selection on the given dataset
+     *
      * @param genesList list of all the genes in the data set
      */
     public void executeKMeans(ArrayList<Gene> genesList) {
@@ -23,8 +24,8 @@ public class KMeans {
 
         // create initial clusters
         System.out.println("Initial Clusters:");
-        for(int i = 0; i < centroids.size(); i++) {
-            System.out.print(centroids.get(i).getGeneID()+",");
+        for (int i = 0; i < centroids.size(); i++) {
+            System.out.print(centroids.get(i).getGeneID() + ",");
             Cluster cluster = new Cluster();
             cluster.setCentroid(genesList.get(centroids.get(i).getGeneID() - 1).getGeneExpValues());
             HashSet<Integer> geneIDs = new HashSet<>();
@@ -36,9 +37,9 @@ public class KMeans {
         System.out.println("New Clusters:");
         // Assign points to clusters
         boolean clustersAreChanging = true;
-        while(clustersAreChanging) {
+        while (clustersAreChanging) {
             clustersAreChanging = false;
-            for (Gene g: genesList) {
+            for (Gene g : genesList) {
                 int newClusterID = -1;
                 int currentClusterID = g.getClusterID();
                 int geneID = g.getGeneID();
@@ -46,12 +47,12 @@ public class KMeans {
 
                 // calculate distance of current point with each cluster centroid and save the cluster ID which is closest
                 for (Integer key : clustersList.keySet()) {
-                        double temp = Utility.calculateEuclideanDistance(clustersList.get(key).getCentroid(),
-                                g.getGeneExpValues());
-                        if (temp < minDistance) {
-                            minDistance = temp;
-                            newClusterID = key;
-                        }
+                    double temp = Utility.calculateEuclideanDistance(clustersList.get(key).getCentroid(),
+                            g.getGeneExpValues());
+                    if (temp < minDistance) {
+                        minDistance = temp;
+                        newClusterID = key;
+                    }
                 }
 
                 // update clusters
@@ -61,7 +62,7 @@ public class KMeans {
                     tempList.add(geneID);
 
                     // remove gene from current cluster
-                    if(currentClusterID != -1) {
+                    if (currentClusterID != -1) {
                         clustersList.get(currentClusterID).getGeneIDs().remove(geneID);
                         clustersList.get(currentClusterID).setCentroid(recalculateCentroidForRemoveGene(currentClusterID,
                                 tempList.size(), g.getGeneExpValues()));
@@ -70,20 +71,21 @@ public class KMeans {
                     // add gene to new cluster
                     clustersList.get(newClusterID).setCentroid(recalculateCentroidForAddGene(newClusterID,
                             tempList.size(), g.getGeneExpValues()));
-                   g.setClusterID(newClusterID);
+                    g.setClusterID(newClusterID);
                     clustersList.get(newClusterID).setGeneIDs(tempList);
                 }
             }
         }
 
         // print clusters
-        for(Integer key: clustersList.keySet()) {
+        for (Integer key : clustersList.keySet()) {
             System.out.println(clustersList.get(key).getGeneIDs());
         }
     }
 
     /**
      * Get initial K centroids using K-means++
+     *
      * @param genesList all the genes in the data set
      * @return K Centroids that are selected using Kmeans++
      */
@@ -101,8 +103,8 @@ public class KMeans {
         selectedCentroids.add(genesList.get(firstPointIndex));
 
         //calculate distance from firstPoint
-        for(int i = 0; i < numberOfGenes; i++) {
-            if(i != firstPointIndex) {
+        for (int i = 0; i < numberOfGenes; i++) {
+            if (i != firstPointIndex) {
                 double distance = Utility.calculateEuclideanDistance(genesList.get(i).getGeneExpValues(),
                         genesList.get(firstPointIndex).getGeneExpValues());
                 distanceSquaredArray[i] = distance * distance;
@@ -110,12 +112,12 @@ public class KMeans {
         }
 
         //get rest of the points
-        while(selectedCentroids.size() < K) {
+        while (selectedCentroids.size() < K) {
             double distanceSquaredSum = 0.0;
 
             //calculate summation of D(x)^2
-            for(int i = 0; i < numberOfGenes; i++) {
-                if(!selectedCentroidIndexes.contains(i)) {
+            for (int i = 0; i < numberOfGenes; i++) {
+                if (!selectedCentroidIndexes.contains(i)) {
                     distanceSquaredSum += distanceSquaredArray[i];
                 }
             }
@@ -125,10 +127,10 @@ public class KMeans {
             int nextPointIndex = -1;
             double sum = 0.0;
 
-            for(int i = 0; i < numberOfGenes; i++) {
-                if(!selectedCentroidIndexes.contains(i)) {
+            for (int i = 0; i < numberOfGenes; i++) {
+                if (!selectedCentroidIndexes.contains(i)) {
                     sum += distanceSquaredArray[i];
-                    if(sum >= r) {
+                    if (sum >= r) {
                         nextPointIndex = i;
                         break;
                     }
@@ -136,19 +138,19 @@ public class KMeans {
             }
 
             // found a point
-            if(nextPointIndex >= 0) {
+            if (nextPointIndex >= 0) {
                 // add new point to both lists
                 selectedCentroidIndexes.add(nextPointIndex);
                 selectedCentroids.add(genesList.get(nextPointIndex));
                 ArrayList<Double> selectedCentroidExpValues = genesList.get(nextPointIndex).getGeneExpValues();
 
-                if(selectedCentroids.size() < K) {
-                    for(int i = 0; i < numberOfGenes; i++) {
-                        if(!selectedCentroidIndexes.contains(i)) {
+                if (selectedCentroids.size() < K) {
+                    for (int i = 0; i < numberOfGenes; i++) {
+                        if (!selectedCentroidIndexes.contains(i)) {
                             double distance = Utility.calculateEuclideanDistance(selectedCentroidExpValues,
                                     genesList.get(i).getGeneExpValues());
                             distance = distance * distance;
-                            if(distance < distanceSquaredArray[i]) {
+                            if (distance < distanceSquaredArray[i]) {
                                 distanceSquaredArray[i] = distance;
                             }
                         }
@@ -165,9 +167,10 @@ public class KMeans {
 
     /**
      * Recalculate the centroid for a new point to be added
+     *
      * @param clusterID the id for the cluster to be changed
-     * @param size number of genes in the cluster
-     * @param newPoint the point to be added to the cluster
+     * @param size      number of genes in the cluster
+     * @param newPoint  the point to be added to the cluster
      * @return new centroid after adding the point
      */
     private ArrayList<Double> recalculateCentroidForAddGene(int clusterID, int size, ArrayList<Double> newPoint) {
@@ -181,9 +184,10 @@ public class KMeans {
 
     /**
      * Recalculate the centroid for a point to be deleted
+     *
      * @param clusterID the id for the cluster to be changed
-     * @param size number of genes in the cluster
-     * @param oldPoint the point to be removed from the cluster
+     * @param size      number of genes in the cluster
+     * @param oldPoint  the point to be removed from the cluster
      * @return new centroid after removing the old point
      */
     private ArrayList<Double> recalculateCentroidForRemoveGene(int clusterID, int size, ArrayList<Double> oldPoint) {

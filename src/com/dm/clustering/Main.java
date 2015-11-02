@@ -12,7 +12,7 @@ public class Main {
     public static void main(String args[]) {
         InputParser inputParser = new InputParser(FILE_ONE_PATH);
         ArrayList<Gene> genesList = inputParser.parseData();
-        if(genesList.size() > 0) {
+        if (genesList.size() > 0) {
             KMeans kMeans = new KMeans();
             kMeans.executeKMeans(genesList);
         }

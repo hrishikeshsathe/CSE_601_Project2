@@ -18,6 +18,7 @@ public class InputParser {
 
     /**
      * Initialize
+     *
      * @param filePath path of the file to be parsed
      */
     public InputParser(String filePath) {
@@ -32,21 +33,22 @@ public class InputParser {
 
     /**
      * Parse the input text file and return arraylist of genes
+     *
      * @return ArrayList<Gene>
      */
     public ArrayList<Gene> parseData() {
         String line;
         ArrayList<Gene> genesList = new ArrayList<>();
         try {
-            while((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 String[] strArray = line.split(StringUtility.TAB);
                 Gene gene = new Gene();
                 gene.setGeneID(Integer.parseInt(strArray[0]));
                 gene.setClusterID(-1);
                 gene.setGroundTruth(Integer.parseInt(strArray[1]));
                 ArrayList<Double> geneExpList = new ArrayList<>();
-                for(int i = 0; i < strArray.length - 2; i++) {
-                    geneExpList.add(Double.valueOf(strArray[i+2]));
+                for (int i = 0; i < strArray.length - 2; i++) {
+                    geneExpList.add(Double.valueOf(strArray[i + 2]));
                 }
                 gene.setGeneExpValues(geneExpList);
                 genesList.add(gene);
