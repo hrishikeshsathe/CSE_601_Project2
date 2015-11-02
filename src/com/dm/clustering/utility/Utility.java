@@ -2,9 +2,6 @@ package com.dm.clustering.utility;
 
 import java.util.ArrayList;
 
-/**
- * Created by Hrishikesh on 11/1/2015.
- */
 public class Utility {
 
     /**

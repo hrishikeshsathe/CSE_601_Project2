@@ -22,7 +22,7 @@ public class Gene {
 
     /**
      * Set the groundTruth for the gene
-     * @param groundTruth
+     * @param groundTruth groundTruth for the gene
      */
     public void setGroundTruth(int groundTruth) {
         this.groundTruth = groundTruth;
@@ -37,7 +37,7 @@ public class Gene {
 
     /**
      * Set the clusterID for the gene
-     * @param clusterID
+     * @param clusterID clusterID for the gene
      */
     public void setClusterID(int clusterID) {
         this.clusterID = clusterID;
@@ -52,15 +52,14 @@ public class Gene {
 
     /**
      * Set the geneID for the gene
-     * @param geneID
+     * @param geneID geneID for the gene
      */
     public void setGeneID(int geneID) {
         this.geneID = geneID;
     }
 
     /**
-     * Return a list of expression values for the gene
-     * @return
+     * @return Return a list of expression values for the gene
      */
     public ArrayList<Double> getGeneExpValues() {
         return geneExpValues;
@@ -68,7 +67,7 @@ public class Gene {
 
     /**
      * Set the gene expression values for the gene
-     * @param geneExpValues
+     * @param geneExpValues list of gene expression values
      */
     public void setGeneExpValues(ArrayList<Double> geneExpValues) {
         this.geneExpValues = geneExpValues;

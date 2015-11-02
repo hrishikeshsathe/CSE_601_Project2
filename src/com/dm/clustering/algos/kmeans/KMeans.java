@@ -11,30 +11,83 @@ import java.util.Random;
 
 public class KMeans {
     public static final int K = 10;
-    ArrayList<Gene> centroids;
     HashMap<Integer, Cluster> clustersList;
 
+    /**
+     * Execute the KMeans algorithm using KMeans++ for initial centroid selection on the given dataset
+     * @param genesList list of all the genes in the data set
+     */
     public void executeKMeans(ArrayList<Gene> genesList) {
-        centroids = getInitialKCentroids(genesList);
+        ArrayList<Gene> centroids = getInitialKCentroidsUsingKMeansPlusPlus(genesList);
         clustersList = new HashMap<>();
 
         // create initial clusters
+        System.out.println("Initial Clusters:");
         for(int i = 0; i < centroids.size(); i++) {
+            System.out.print(centroids.get(i).getGeneID()+",");
             Cluster cluster = new Cluster();
             cluster.setCentroid(genesList.get(centroids.get(i).getGeneID() - 1).getGeneExpValues());
-            ArrayList<Integer> geneIDs = new ArrayList<>();
-            geneIDs.add(centroids.get(i).getGeneID());
+            HashSet<Integer> geneIDs = new HashSet<>();
             cluster.setGeneIDs(geneIDs);
             clustersList.put(i + 1, cluster);
+        }
+        System.out.println();
+
+        System.out.println("New Clusters:");
+        // Assign points to clusters
+        boolean clustersAreChanging = true;
+        while(clustersAreChanging) {
+            clustersAreChanging = false;
+            for (Gene g: genesList) {
+                int newClusterID = -1;
+                int currentClusterID = g.getClusterID();
+                int geneID = g.getGeneID();
+                double minDistance = Double.MAX_VALUE;
+
+                // calculate distance of current point with each cluster centroid and save the cluster ID which is closest
+                for (Integer key : clustersList.keySet()) {
+                        double temp = Utility.calculateEuclideanDistance(clustersList.get(key).getCentroid(),
+                                g.getGeneExpValues());
+                        if (temp < minDistance) {
+                            minDistance = temp;
+                            newClusterID = key;
+                        }
+                }
+
+                // update clusters
+                if (newClusterID != -1 && currentClusterID != newClusterID) {
+                    clustersAreChanging = true;
+                    HashSet<Integer> tempList = clustersList.get(newClusterID).getGeneIDs();
+                    tempList.add(geneID);
+
+                    // remove gene from current cluster
+                    if(currentClusterID != -1) {
+                        clustersList.get(currentClusterID).getGeneIDs().remove(geneID);
+                        clustersList.get(currentClusterID).setCentroid(recalculateCentroidForRemoveGene(currentClusterID,
+                                tempList.size(), g.getGeneExpValues()));
+                    }
+
+                    // add gene to new cluster
+                    clustersList.get(newClusterID).setCentroid(recalculateCentroidForAddGene(newClusterID,
+                            tempList.size(), g.getGeneExpValues()));
+                   g.setClusterID(newClusterID);
+                    clustersList.get(newClusterID).setGeneIDs(tempList);
+                }
+            }
+        }
+
+        // print clusters
+        for(Integer key: clustersList.keySet()) {
+            System.out.println(clustersList.get(key).getGeneIDs());
         }
     }
 
     /**
      * Get initial K centroids using K-means++
-     * @param genesList
-     * @return
+     * @param genesList all the genes in the data set
+     * @return K Centroids that are selected using Kmeans++
      */
-    private ArrayList<Gene> getInitialKCentroids(ArrayList<Gene> genesList) {
+    private ArrayList<Gene> getInitialKCentroidsUsingKMeansPlusPlus(ArrayList<Gene> genesList) {
         int numberOfGenes = genesList.size();
         HashSet<Integer> selectedCentroidIndexes = new HashSet<>(K);
         ArrayList<Gene> selectedCentroids = new ArrayList<>();
@@ -108,5 +161,37 @@ public class KMeans {
             }
         }
         return selectedCentroids;
+    }
+
+    /**
+     * Recalculate the centroid for a new point to be added
+     * @param clusterID the id for the cluster to be changed
+     * @param size number of genes in the cluster
+     * @param newPoint the point to be added to the cluster
+     * @return new centroid after adding the point
+     */
+    private ArrayList<Double> recalculateCentroidForAddGene(int clusterID, int size, ArrayList<Double> newPoint) {
+        ArrayList<Double> tempCentroid = clustersList.get(clusterID).getCentroid();
+        for (int j = 0; j < tempCentroid.size(); j++) {
+            tempCentroid.set(j,
+                    ((tempCentroid.get(j) * (size - 1)) + newPoint.get(j)) / size);
+        }
+        return tempCentroid;
+    }
+
+    /**
+     * Recalculate the centroid for a point to be deleted
+     * @param clusterID the id for the cluster to be changed
+     * @param size number of genes in the cluster
+     * @param oldPoint the point to be removed from the cluster
+     * @return new centroid after removing the old point
+     */
+    private ArrayList<Double> recalculateCentroidForRemoveGene(int clusterID, int size, ArrayList<Double> oldPoint) {
+        ArrayList<Double> tempCentroid = clustersList.get(clusterID).getCentroid();
+        for (int j = 0; j < tempCentroid.size(); j++) {
+            tempCentroid.set(j,
+                    ((tempCentroid.get(j) * size) - oldPoint.get(j)) / (size - 1));
+        }
+        return tempCentroid;
     }
 } // end of class
