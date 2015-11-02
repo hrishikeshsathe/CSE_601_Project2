@@ -1,10 +1,11 @@
 package com.dm.clustering.data.pojo;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Cluster {
     private ArrayList<Double> centroid;
-    private ArrayList<Integer> geneIDs;
+    private HashSet<Integer> geneIDs;
 
     public ArrayList<Double> getCentroid() {
         return centroid;
@@ -14,11 +15,11 @@ public class Cluster {
         this.centroid = centroid;
     }
 
-    public ArrayList<Integer> getGeneIDs() {
+    public HashSet<Integer> getGeneIDs() {
         return geneIDs;
     }
 
-    public void setGeneIDs(ArrayList<Integer> geneIDs) {
+    public void setGeneIDs(HashSet<Integer> geneIDs) {
         this.geneIDs = geneIDs;
     }
 }

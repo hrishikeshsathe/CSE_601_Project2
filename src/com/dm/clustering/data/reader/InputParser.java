@@ -18,7 +18,7 @@ public class InputParser {
 
     /**
      * Initialize
-     * @param filePath
+     * @param filePath path of the file to be parsed
      */
     public InputParser(String filePath) {
         LOGGER.addHandler(handler);
@@ -42,7 +42,8 @@ public class InputParser {
                 String[] strArray = line.split(StringUtility.TAB);
                 Gene gene = new Gene();
                 gene.setGeneID(Integer.parseInt(strArray[0]));
-                gene.setClusterID(Integer.parseInt(strArray[1]));
+                gene.setClusterID(-1);
+                gene.setGroundTruth(Integer.parseInt(strArray[1]));
                 ArrayList<Double> geneExpList = new ArrayList<>();
                 for(int i = 0; i < strArray.length - 2; i++) {
                     geneExpList.add(Double.valueOf(strArray[i+2]));
