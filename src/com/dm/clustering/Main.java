@@ -1,5 +1,6 @@
 package com.dm.clustering;
 
+import com.dm.clustering.algos.kmeans.KMeans;
 import com.dm.clustering.data.pojo.Gene;
 import com.dm.clustering.data.reader.InputParser;
 
@@ -12,7 +13,8 @@ public class Main {
         InputParser inputParser = new InputParser(FILE_ONE_PATH);
         ArrayList<Gene> genesList = inputParser.parseData();
         if(genesList.size() > 0) {
-
+            KMeans kMeans = new KMeans();
+            kMeans.executeKMeans(genesList);
         }
     }
 }
