@@ -3,6 +3,7 @@ package com.dm.clustering.algos.kmeans;
 import com.dm.clustering.data.pojo.Cluster;
 import com.dm.clustering.data.pojo.Gene;
 import com.dm.clustering.utility.Utility;
+import com.dm.clustering.validation.ExternalIndex;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +13,8 @@ import java.util.Random;
 public class KMeans {
     public static final int K = 10;
     HashMap<Integer, Cluster> clustersList;
+    int[][] clusterIncidenceMatrix;
+    int[][] groundTruthIncidenceMatrix;
 
     /**
      * Execute the KMeans algorithm using KMeans++ for initial centroid selection on the given dataset
@@ -19,7 +22,8 @@ public class KMeans {
      * @param genesList list of all the genes in the data set
      */
     public void executeKMeans(ArrayList<Gene> genesList) {
-        ArrayList<Gene> centroids = getInitialKCentroidsUsingKMeansPlusPlus(genesList);
+//        ArrayList<Gene> centroids = getInitialKCentroidsUsingKMeansPlusPlus(genesList);
+        ArrayList<Gene> centroids = getTestCentroids(genesList);
         clustersList = new HashMap<>();
 
         // create initial clusters
@@ -27,7 +31,7 @@ public class KMeans {
         for (int i = 0; i < centroids.size(); i++) {
             System.out.print(centroids.get(i).getGeneID() + ",");
             Cluster cluster = new Cluster();
-            cluster.setCentroid(genesList.get(centroids.get(i).getGeneID() - 1).getGeneExpValues());
+            cluster.setCentroid(centroids.get(i).getGeneExpValues());
             HashSet<Integer> geneIDs = new HashSet<>();
             cluster.setGeneIDs(geneIDs);
             clustersList.put(i + 1, cluster);
@@ -58,29 +62,62 @@ public class KMeans {
                 // update clusters
                 if (newClusterID != -1 && currentClusterID != newClusterID) {
                     clustersAreChanging = true;
-                    HashSet<Integer> tempList = clustersList.get(newClusterID).getGeneIDs();
-                    tempList.add(geneID);
 
                     // remove gene from current cluster
                     if (currentClusterID != -1) {
-                        clustersList.get(currentClusterID).getGeneIDs().remove(geneID);
                         clustersList.get(currentClusterID).setCentroid(recalculateCentroidForRemoveGene(currentClusterID,
-                                tempList.size(), g.getGeneExpValues()));
+                                clustersList.get(currentClusterID).getGeneIDs().size(), g.getGeneExpValues()));
+                        clustersList.get(currentClusterID).getGeneIDs().remove(geneID);
                     }
 
                     // add gene to new cluster
                     clustersList.get(newClusterID).setCentroid(recalculateCentroidForAddGene(newClusterID,
-                            tempList.size(), g.getGeneExpValues()));
+                            clustersList.get(newClusterID).getGeneIDs().size(), g.getGeneExpValues()));
+                    clustersList.get(newClusterID).getGeneIDs().add(geneID);
                     g.setClusterID(newClusterID);
-                    clustersList.get(newClusterID).setGeneIDs(tempList);
                 }
             }
         }
 
         // print clusters
         for (Integer key : clustersList.keySet()) {
-            System.out.println(clustersList.get(key).getGeneIDs());
+//            System.out.println(clustersList.get(key).getGeneIDs());
+            System.out.println(clustersList.get(key).getGeneIDs().size());
         }
+
+        populateIncidenceMatrix(genesList);
+        ExternalIndex externalIndex = new ExternalIndex(clusterIncidenceMatrix, groundTruthIncidenceMatrix);
+        System.out.println("Rand Index: " + externalIndex.calculateRandIndex());
+        System.out.println("Jaccard Coefficient: " + externalIndex.calculateJaccardIndex());
+    }
+
+
+    private void populateIncidenceMatrix(ArrayList<Gene> genesList) {
+        clusterIncidenceMatrix = new int[genesList.size()][genesList.size()];
+        groundTruthIncidenceMatrix = new int[genesList.size()][genesList.size()];
+        for(int i = 0; i < genesList.size(); i++) {
+            int clusterID = genesList.get(0).getClusterID();
+            int groundTruth = genesList.get(0).getGroundTruth();
+            for(int j = 0; j < genesList.size(); j++) {
+                clusterIncidenceMatrix[i][j] = (clusterID == genesList.get(j).getClusterID()) ? 1 : 0;
+                groundTruthIncidenceMatrix[i][j] = (groundTruth == genesList.get(j).getGroundTruth()) ? 1 : 0;
+            }
+        }
+    }
+
+    private ArrayList<Gene> getTestCentroids(ArrayList<Gene> genesList) {
+        ArrayList<Gene> toReturn = new ArrayList<>();
+        toReturn.add(genesList.get(0));
+        toReturn.add(genesList.get(101));
+        toReturn.add(genesList.get(262));
+        toReturn.add(genesList.get(300));
+        toReturn.add(genesList.get(343));
+        toReturn.add(genesList.get(355));
+        toReturn.add(genesList.get(393));
+        toReturn.add(genesList.get(410));
+        toReturn.add(genesList.get(473));
+        toReturn.add(genesList.get(492));
+        return toReturn;
     }
 
     /**
@@ -177,7 +214,7 @@ public class KMeans {
         ArrayList<Double> tempCentroid = clustersList.get(clusterID).getCentroid();
         for (int j = 0; j < tempCentroid.size(); j++) {
             tempCentroid.set(j,
-                    ((tempCentroid.get(j) * (size - 1)) + newPoint.get(j)) / size);
+                    ((tempCentroid.get(j) * size) + newPoint.get(j)) / (size + 1));
         }
         return tempCentroid;
     }
