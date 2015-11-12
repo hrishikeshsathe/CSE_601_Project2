@@ -7,7 +7,7 @@ import com.dm.clustering.data.reader.InputParser;
 import java.util.ArrayList;
 
 public class Main {
-    static final String FILE_ONE_PATH = "D:\\Courses\\DM\\Project 2\\Data\\iyer.txt";
+    static final String FILE_ONE_PATH = "D:\\Courses\\DM\\Project 2\\Data\\cho.txt";
 
     public static void main(String args[]) {
         InputParser inputParser = new InputParser(FILE_ONE_PATH);
@@ -16,5 +16,6 @@ public class Main {
             KMeans kMeans = new KMeans();
             kMeans.executeKMeans(genesList);
         }
+
     }
 }
