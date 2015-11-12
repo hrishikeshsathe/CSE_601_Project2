@@ -4,6 +4,7 @@ import com.dm.clustering.data.pojo.Cluster;
 import com.dm.clustering.data.pojo.Gene;
 import com.dm.clustering.utility.Utility;
 import com.dm.clustering.validation.ExternalIndex;
+import com.dm.clustering.validation.InternalIndex;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,6 +96,9 @@ public class KMeans {
         ExternalIndex externalIndex = new ExternalIndex(clusterIncidenceMatrix, groundTruthIncidenceMatrix);
         System.out.println("Rand Index: " + externalIndex.calculateRandIndex());
         System.out.println("Jaccard Coefficient: " + externalIndex.calculateJaccardIndex());
+        InternalIndex internalIndex = new InternalIndex();
+        System.out.println("Silhouette Coefficient: " + internalIndex.calculateSilhouetteCoefficient(clustersList,
+                genesList));
     }
 
 
