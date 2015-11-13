@@ -47,6 +47,15 @@ public class InternalIndex {
         }
         return sum / geneIDs.size();
     }
+
+    private double calculateAverageDistanceToCluster(ArrayList<Double> geneExpValues, HashSet<Integer> geneIDs,
+                                                     HashMap<Integer, Gene> geneMap) {
+        double sum = 0.0;
+        for (Integer geneID : geneIDs) {
+            sum += Utility.calculateEuclideanDistance(geneExpValues, geneMap.get(geneID).getGeneExpValues());
+        }
+        return sum / geneIDs.size();
+    }
 }
 
 
