@@ -6,8 +6,11 @@ import com.dm.clustering.data.pojo.Gene;
 import com.dm.clustering.data.reader.InputParser;
 import com.dm.clustering.utility.Utility;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Created by Samved on 11/1/2015.
@@ -15,26 +18,49 @@ import java.util.List;
 public class AgglomerativeClustering {
 
     static List<AgglomerativeCluster> currentClusters = new ArrayList<>();
-
+    static Map<Integer, ClusterPair> clusterPairs = new LinkedHashMap<>();
+    private static int clusterId = 0;
+    private static Integer mergedClusterId = 0;
     //Add each data point as a different cluster
     public static void initiateClusters() {
-        InputParser ip = new InputParser("E:\\DM\\Project 2\\iyer.txt");
+        InputParser ip = new InputParser("E:\\DM\\Project 2\\cho.txt");
         List<Gene> genes = ip.parseData();
         for (Gene g : genes) {
-            currentClusters.add(new AgglomerativeCluster(g));
+            currentClusters.add(new AgglomerativeCluster(g, clusterId++));
         }
+        mergedClusterId = clusterId;
     }
 
     //TODO
     public static void mergeClusters(ClusterPair cp) {
 
-        AgglomerativeCluster superAggCluster = new AgglomerativeCluster(cp);
-        currentClusters.add(superAggCluster);
+        AgglomerativeCluster parentCluster = new AgglomerativeCluster(cp, clusterId++);
         currentClusters.remove(cp.getFirstCluster());
         currentClusters.remove(cp.getSecondCluster());
+        currentClusters.add(parentCluster);
+
+        for (Integer i : clusterPairs.keySet()) {
+            ClusterPair currentPair = clusterPairs.get(i);
+            if(cp.getFirstCluster().getClusterId() == currentPair.getFirstCluster().getClusterId()  ||
+                    cp.getFirstCluster().getClusterId() == currentPair.getSecondCluster().getClusterId()) {
+                cp.getFirstCluster().setClusterId(i);
+                cp.getFirstCluster().getGenes().addAll(currentPair.getFirstCluster().getGenes());
+                cp.getFirstCluster().getGenes().addAll(currentPair.getSecondCluster().getGenes());
+            }
+            if(cp.getSecondCluster().getClusterId() == currentPair.getFirstCluster().getClusterId()  ||
+                    cp.getSecondCluster().getClusterId() == currentPair.getSecondCluster().getClusterId()) {
+                cp.getSecondCluster().setClusterId(i);
+                cp.getSecondCluster().getGenes().addAll(currentPair.getFirstCluster().getGenes());
+                cp.getSecondCluster().getGenes().addAll(currentPair.getSecondCluster().getGenes());
+            }
+
+        }
+        clusterPairs.put(mergedClusterId++ , cp);
+
+        //System.out.println("Merging: " + (cp.getFirstCluster().getClusterId()) + " and " + (cp.getSecondCluster().getClusterId()) + " into " + (parentCluster.getClusterId() ));
     }
 
-    //TODO
+
     public static double getDistBetweenClusters(AgglomerativeCluster cluster1, AgglomerativeCluster cluster2) {
         List<Gene> clusterOneGenes = cluster1.getGenes();
         List<Gene> clusterTwoGenes = cluster2.getGenes();
@@ -54,10 +80,12 @@ public class AgglomerativeClustering {
         AgglomerativeCluster first = null;
         AgglomerativeCluster second = null;
         double minDist = Double.MAX_VALUE;
-
+        int sampleCount = 0;
         for (int i = 0; i < currentClusters.size(); i++) {
             AgglomerativeCluster temp1 = currentClusters.get(i);
-            for (int j = i + 1; j < currentClusters.size(); j++) {
+            for (int j = 0; j < currentClusters.size(); j++) {
+                if (i == j)
+                    continue;
                 AgglomerativeCluster temp2 = currentClusters.get(j);
                 double distBetweenClusters = getDistBetweenClusters(temp1, temp2);
                 if (distBetweenClusters < minDist) {
@@ -67,25 +95,49 @@ public class AgglomerativeClustering {
                 }
             }
         }
-        return new ClusterPair(first, second);
+
+        return new ClusterPair(first, second, minDist);
     }
 
     public static void printClusters() {
+        System.out.print(currentClusters.size() + ":-  ");
         for (AgglomerativeCluster cluster : currentClusters)
         {
+            System.out.print(cluster.getClusterId() + "::");
             for (Gene g : cluster.getGenes())
                 System.out.print(g.getGeneID() + "  ");
+            System.out.println();
         }
     }
 
-    public static void main(String[] args) {
-        initiateClusters();
-
-        while (currentClusters.size() > 1) {
-            printClusters();
-            System.out.println();
-            mergeClusters(findClosestClusters());
+    public static void printClusterPairs()
+    {
+        File f = new File("HACResults.txt");
+        String singleRecord = "";
+        try {
+            FileWriter fw = new FileWriter(f);
+            BufferedWriter bw = new BufferedWriter(fw);
+            for (Integer i : clusterPairs.keySet()) {
+                ClusterPair cp = clusterPairs.get(i);
+                singleRecord = (cp.getFirstCluster().getClusterId() + "," + cp.getSecondCluster().getClusterId() + ","
+                        + cp.getMinDistance() + "," + (cp.getFirstCluster().getGenes().size() + cp.getSecondCluster().getGenes().size()));
+                bw.write(singleRecord);
+                bw.newLine();
+            }
+            bw.close();
+            fw.close();
+        }catch (IOException e){
+            System.out.println("IO Exception while writing results to the file");
         }
 
+    }
+    public static void main(String[] args) {
+        initiateClusters();
+        while (currentClusters.size() > 1) {
+            //System.out.println();
+            mergeClusters(findClosestClusters());
+        }
+        // printClusters();
+        printClusterPairs();
     }
 }
