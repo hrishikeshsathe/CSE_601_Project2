@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Main {
     static final String FILE_ONE_PATH = "D:\\Courses\\DM\\Project 2\\Data\\cho.txt";
 
-    public static void main(String args[]) {
+    /*public static void main(String args[]) {
         InputParser inputParser = new InputParser(FILE_ONE_PATH);
         ArrayList<Gene> genesList = inputParser.parseData();
         if (genesList.size() > 0) {
@@ -17,5 +17,5 @@ public class Main {
             kMeans.executeKMeans(genesList);
         }
 
-    }
+    }*/
 }

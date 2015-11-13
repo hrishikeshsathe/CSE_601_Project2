@@ -97,7 +97,7 @@ public class KMeans {
         System.out.println("Jaccard Coefficient: " + externalIndex.calculateJaccardIndex());
         InternalIndex internalIndex = new InternalIndex();
         System.out.println("Silhouette Coefficient: " + internalIndex.calculateSilhouetteCoefficient(clustersList,
-                genesList));
+                genesList, Utility.GENE_MAP));
     }
 
     /**

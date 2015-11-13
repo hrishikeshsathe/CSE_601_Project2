@@ -42,7 +42,7 @@ public class InputParser {
     public ArrayList<Gene> parseData() {
         String line;
         ArrayList<Gene> genesList = new ArrayList<>();
-        Map<Integer, Gene> geneHashMap = new HashMap<>();
+        HashMap<Integer, Gene> geneHashMap = new HashMap<>();
         try {
             while ((line = br.readLine()) != null) {
                 String[] strArray = line.split(StringUtility.TAB);

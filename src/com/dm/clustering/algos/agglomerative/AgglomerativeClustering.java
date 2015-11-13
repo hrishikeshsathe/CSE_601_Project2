@@ -6,6 +6,8 @@ import com.dm.clustering.data.pojo.ClusterPair;
 import com.dm.clustering.data.pojo.Gene;
 import com.dm.clustering.data.reader.InputParser;
 import com.dm.clustering.utility.Utility;
+import com.dm.clustering.validation.ExternalIndex;
+import com.dm.clustering.validation.InternalIndex;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,7 +26,7 @@ public class AgglomerativeClustering {
     private static Integer mergedClusterId = 0;
     //Add each data point as a different cluster
     public static void initiateClusters() {
-        InputParser ip = new InputParser("E:\\DM\\Project 2\\cho.txt");
+        InputParser ip = new InputParser("E:\\DM\\Project 2\\iyer.txt");
         List<Gene> genes = ip.parseData();
         for (Gene g : genes) {
             currentClusters.add(new AgglomerativeCluster(g, clusterId++));
@@ -131,20 +133,27 @@ public class AgglomerativeClustering {
 
     }
     public static void calculateValidationCoef(){
-        Map<Integer, Cluster> clusters = new HashMap<>();
-        List<Gene> geneList = new ArrayList<>();
-
+        HashMap<Integer, Cluster> clusters = new HashMap<>();
+        ArrayList<Gene> geneList = new ArrayList<>();
+        HashMap<Integer, Gene> geneMap= new HashMap<>();
         for(AgglomerativeCluster ac : currentClusters){
             Cluster c = new Cluster();
             HashSet<Integer> geneIds = new HashSet<>();
             for (Gene g : ac.getGenes()) {
                 g.setClusterID(ac.getClusterId());
                 geneIds.add(g.getGeneID());
+                geneMap.put(g.getGeneID(), g);
+
             }
             geneList.addAll(ac.getGenes());
             c.setGeneIDs(geneIds);
             clusters.put(ac.getClusterId(), c);
         }
+        ExternalIndex ei = new ExternalIndex(geneList);
+        System.out.println("Jaccard Index : " + ei.calculateJaccardIndex());
+        System.out.println("Rand Index : " + ei.calculateRandIndex());
+        InternalIndex ii = new InternalIndex();
+        System.out.println("Silhouette Index: " + ii.calculateSilhouetteCoefficient(clusters, geneList, geneMap));
 
     }
     public static void main(String[] args) {
