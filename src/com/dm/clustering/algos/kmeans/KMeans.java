@@ -156,7 +156,6 @@ public class KMeans {
                 }
             }
 
-            //next random point with probability proportional to D(x)^2
             double r = random.nextDouble() * distanceSquaredSum;
             int nextPointIndex = -1;
             double sum = 0.0;
@@ -192,7 +191,7 @@ public class KMeans {
                 } // end of selectedCentroids.size() < K
             } // end of nextPointIndex >=0
             else {
-                // no point found. break to prevent infinite loop
+                // no point found
                 break;
             }
         }

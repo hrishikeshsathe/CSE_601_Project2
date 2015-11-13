@@ -1,9 +1,14 @@
 package com.dm.clustering.utility;
 
+import com.dm.clustering.data.pojo.Gene;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Utility {
 
+    public static Map<Integer, Gene> GENE_MAP = new HashMap<>();
     /**
      * Calculate euclidean distance between two lists of points
      * @param list1 points in list1

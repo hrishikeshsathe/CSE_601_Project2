@@ -2,12 +2,15 @@ package com.dm.clustering.data.reader;
 
 import com.dm.clustering.data.pojo.Gene;
 import com.dm.clustering.utility.StringUtility;
+import com.dm.clustering.utility.Utility;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
 
@@ -39,6 +42,7 @@ public class InputParser {
     public ArrayList<Gene> parseData() {
         String line;
         ArrayList<Gene> genesList = new ArrayList<>();
+        Map<Integer, Gene> geneHashMap = new HashMap<>();
         try {
             while ((line = br.readLine()) != null) {
                 String[] strArray = line.split(StringUtility.TAB);
@@ -52,10 +56,12 @@ public class InputParser {
                 }
                 gene.setGeneExpValues(geneExpList);
                 genesList.add(gene);
+                geneHashMap.put(gene.getGeneID(), gene);
             }
         } catch (IOException e) {
             LOGGER.warning(e.getMessage());
         }
+        Utility.GENE_MAP = geneHashMap;
         return genesList;
     }
 }

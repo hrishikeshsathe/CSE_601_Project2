@@ -21,12 +21,12 @@ public class InternalIndex {
         for (int i = 0; i < geneList.size(); i++) {
             int clusterID = geneList.get(i).getClusterID();
             double a = calculateAverageDistanceToCluster(geneList.get(i).getGeneExpValues(),
-                    clusterList.get(clusterID).getGeneIDs(), geneList);
+                    clusterList.get(clusterID).getGeneIDs());
             double b = Double.MAX_VALUE;
             for (Integer clusterIndex : clusterList.keySet()) {
                 if(clusterIndex != clusterID) {
                     b = Math.min(b, calculateAverageDistanceToCluster(geneList.get(i).getGeneExpValues(),
-                            clusterList.get(clusterIndex).getGeneIDs(), geneList));
+                            clusterList.get(clusterIndex).getGeneIDs()));
                 }
             }
             silhouetteIndex += (b - a) / Math.max(a, b);
@@ -38,14 +38,12 @@ public class InternalIndex {
      * Calculate the average distance of a point with a cluster
      * @param geneExpValues exp values of a point
      * @param geneIDs list of genes in that cluster
-     * @param geneList list of all genes
      * @return average distance
      */
-    private double calculateAverageDistanceToCluster(ArrayList<Double> geneExpValues, HashSet<Integer> geneIDs,
-                                                     ArrayList<Gene> geneList) {
+    private double calculateAverageDistanceToCluster(ArrayList<Double> geneExpValues, HashSet<Integer> geneIDs) {
         double sum = 0.0;
         for (Integer geneID : geneIDs) {
-            sum += Utility.calculateEuclideanDistance(geneExpValues, geneList.get(geneID - 1).getGeneExpValues());
+            sum += Utility.calculateEuclideanDistance(geneExpValues, Utility.GENE_MAP.get(geneID).getGeneExpValues());
         }
         return sum / geneIDs.size();
     }
