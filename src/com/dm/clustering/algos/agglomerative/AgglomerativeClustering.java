@@ -152,7 +152,7 @@ public class AgglomerativeClustering {
         while (currentClusters.size() > 1) {
             //System.out.println();
             if(currentClusters.size() == 10)
-                calculateJaccardForHAC();
+                calculateValidationCoef();
             mergeClusters(findClosestClusters());
         }
         // printClusters();
