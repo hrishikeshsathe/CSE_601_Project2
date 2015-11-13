@@ -1,6 +1,7 @@
 package com.dm.clustering.algos.agglomerative;
 
 import com.dm.clustering.data.pojo.AgglomerativeCluster;
+import com.dm.clustering.data.pojo.Cluster;
 import com.dm.clustering.data.pojo.ClusterPair;
 import com.dm.clustering.data.pojo.Gene;
 import com.dm.clustering.data.reader.InputParser;
@@ -31,7 +32,6 @@ public class AgglomerativeClustering {
         mergedClusterId = clusterId;
     }
 
-    //TODO
     public static void mergeClusters(ClusterPair cp) {
 
         AgglomerativeCluster parentCluster = new AgglomerativeCluster(cp, clusterId++);
@@ -95,7 +95,6 @@ public class AgglomerativeClustering {
                 }
             }
         }
-
         return new ClusterPair(first, second, minDist);
     }
 
@@ -131,10 +130,29 @@ public class AgglomerativeClustering {
         }
 
     }
+    public static void calculateValidationCoef(){
+        Map<Integer, Cluster> clusters = new HashMap<>();
+        List<Gene> geneList = new ArrayList<>();
+
+        for(AgglomerativeCluster ac : currentClusters){
+            Cluster c = new Cluster();
+            HashSet<Integer> geneIds = new HashSet<>();
+            for (Gene g : ac.getGenes()) {
+                g.setClusterID(ac.getClusterId());
+                geneIds.add(g.getGeneID());
+            }
+            geneList.addAll(ac.getGenes());
+            c.setGeneIDs(geneIds);
+            clusters.put(ac.getClusterId(), c);
+        }
+
+    }
     public static void main(String[] args) {
         initiateClusters();
         while (currentClusters.size() > 1) {
             //System.out.println();
+            if(currentClusters.size() == 10)
+                calculateValidationCoef();
             mergeClusters(findClosestClusters());
         }
         // printClusters();
