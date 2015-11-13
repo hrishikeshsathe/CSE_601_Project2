@@ -22,15 +22,18 @@ public class AgglomerativeClustering {
 
     static List<AgglomerativeCluster> currentClusters = new ArrayList<>();
     static Map<Integer, ClusterPair> clusterPairs = new LinkedHashMap<>();
+    static List<Gene> originalGenes = new ArrayList<>();
     private static int clusterId = 0;
     private static Integer mergedClusterId = 0;
     //Add each data point as a different cluster
-    public static void initiateClusters() {
-        InputParser ip = new InputParser("E:\\DM\\Project 2\\iyer.txt");
+
+    public static void initiateClusters(String filePath) {
+        InputParser ip = new InputParser(filePath);
         List<Gene> genes = ip.parseData();
         for (Gene g : genes) {
             currentClusters.add(new AgglomerativeCluster(g, clusterId++));
         }
+        originalGenes.addAll(genes);
         mergedClusterId = clusterId;
     }
 
@@ -100,7 +103,7 @@ public class AgglomerativeClustering {
         return new ClusterPair(first, second, minDist);
     }
 
-    public static void printClusters() {
+  /*  public static void printClusters() {
         System.out.print(currentClusters.size() + ":-  ");
         for (AgglomerativeCluster cluster : currentClusters)
         {
@@ -110,8 +113,8 @@ public class AgglomerativeClustering {
             System.out.println();
         }
     }
-
-    public static void printClusterPairs()
+*/
+    public static void generateInputForDendrogram()
     {
         File f = new File("HACResults.txt");
         String singleRecord = "";
@@ -154,17 +157,41 @@ public class AgglomerativeClustering {
         System.out.println("Rand Index : " + ei.calculateRandIndex());
         InternalIndex ii = new InternalIndex();
         System.out.println("Silhouette Index: " + ii.calculateSilhouetteCoefficient(clusters, geneList, geneMap));
+        generateInputFileforPCA(geneMap);
 
     }
-    public static void main(String[] args) {
-        initiateClusters();
+
+    private static void generateInputFileforPCA(HashMap<Integer, Gene> geneMap) {
+
+        try {
+            FileWriter fw = new FileWriter(new File("HACInputForPCA.txt"));
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            for(int i = 0; i<originalGenes.size(); i++){
+                Gene g = originalGenes.get(i);
+                int clusterId = (geneMap.get(g.getGeneID())).getClusterID();
+                bw.write("" + clusterId);
+                bw.newLine();
+            }
+            bw.close();
+            fw.close();
+
+        }catch (IOException e){
+            System.out.println("IOException while creating file HACInputForPCA.txt");
+        }
+
+
+    }
+
+    public static void executeAgglomerativeClustering(int k, String filePath) {
+        initiateClusters(filePath);
         while (currentClusters.size() > 1) {
             //System.out.println();
-            if(currentClusters.size() == 10)
+            if(currentClusters.size() == k)
                 calculateValidationCoef();
             mergeClusters(findClosestClusters());
         }
         // printClusters();
-        printClusterPairs();
+        generateInputForDendrogram();
     }
 }
