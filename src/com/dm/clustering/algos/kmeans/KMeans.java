@@ -12,10 +12,8 @@ import java.util.HashSet;
 import java.util.Random;
 
 public class KMeans {
-    public static final int K = 2;
+    public static final int K = 5;
     HashMap<Integer, Cluster> clustersList;
-    int[][] clusterIncidenceMatrix;
-    int[][] groundTruthIncidenceMatrix;
 
     /**
      * Execute the KMeans algorithm using KMeans++ for initial centroid selection on the given dataset
@@ -23,8 +21,8 @@ public class KMeans {
      * @param genesList list of all the genes in the data set
      */
     public void executeKMeans(ArrayList<Gene> genesList) {
-//        ArrayList<Gene> centroids = getInitialKCentroidsUsingKMeansPlusPlus(genesList);
-        ArrayList<Gene> centroids = getTestCentroids(genesList);
+        ArrayList<Gene> centroids = getInitialKCentroidsUsingKMeansPlusPlus(genesList);
+//        ArrayList<Gene> centroids = getTestCentroids(genesList);
         clustersList = new HashMap<>();
 
         // create initial clusters
@@ -94,27 +92,12 @@ public class KMeans {
 //            System.out.println(clustersList.get(key).getGeneIDs().size());
         }
 
-        populateIncidenceMatrix(genesList);
-        ExternalIndex externalIndex = new ExternalIndex(clusterIncidenceMatrix, groundTruthIncidenceMatrix);
+        ExternalIndex externalIndex = new ExternalIndex(genesList);
         System.out.println("Rand Index: " + externalIndex.calculateRandIndex());
         System.out.println("Jaccard Coefficient: " + externalIndex.calculateJaccardIndex());
         InternalIndex internalIndex = new InternalIndex();
         System.out.println("Silhouette Coefficient: " + internalIndex.calculateSilhouetteCoefficient(clustersList,
                 genesList));
-    }
-
-
-    private void populateIncidenceMatrix(ArrayList<Gene> genesList) {
-        clusterIncidenceMatrix = new int[genesList.size()][genesList.size()];
-        groundTruthIncidenceMatrix = new int[genesList.size()][genesList.size()];
-        for(int i = 0; i < genesList.size(); i++) {
-            int clusterID = genesList.get(i).getClusterID();
-            int groundTruth = genesList.get(i).getGroundTruth();
-            for(int j = 0; j < genesList.size(); j++) {
-                clusterIncidenceMatrix[i][j] = (clusterID == genesList.get(j).getClusterID()) ? 1 : 0;
-                groundTruthIncidenceMatrix[i][j] = (groundTruth == genesList.get(j).getGroundTruth()) ? 1 : 0;
-            }
-        }
     }
 
     /**
