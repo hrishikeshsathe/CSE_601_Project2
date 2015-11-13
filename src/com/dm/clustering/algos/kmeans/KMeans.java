@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 public class KMeans {
-    public static final int K = 5;
+    public static final int K = 2;
     HashMap<Integer, Cluster> clustersList;
     int[][] clusterIncidenceMatrix;
     int[][] groundTruthIncidenceMatrix;
@@ -23,8 +23,8 @@ public class KMeans {
      * @param genesList list of all the genes in the data set
      */
     public void executeKMeans(ArrayList<Gene> genesList) {
-        ArrayList<Gene> centroids = getInitialKCentroidsUsingKMeansPlusPlus(genesList);
-//        ArrayList<Gene> centroids = getTestCentroids(genesList);
+//        ArrayList<Gene> centroids = getInitialKCentroidsUsingKMeansPlusPlus(genesList);
+        ArrayList<Gene> centroids = getTestCentroids(genesList);
         clustersList = new HashMap<>();
 
         // create initial clusters
@@ -32,7 +32,9 @@ public class KMeans {
         for (int i = 0; i < centroids.size(); i++) {
             System.out.print(centroids.get(i).getGeneID() + ",");
             Cluster cluster = new Cluster();
-            cluster.setCentroid(centroids.get(i).getGeneExpValues());
+            ArrayList<Double> temp = new ArrayList<>();
+            temp.addAll(centroids.get(i).getGeneExpValues());
+            cluster.setCentroid(temp);
             HashSet<Integer> geneIDs = new HashSet<>();
             geneIDs.add(centroids.get(i).getGeneID());
             cluster.setGeneIDs(geneIDs);
@@ -88,8 +90,8 @@ public class KMeans {
         // print clusters
         System.out.println("Iterations: " + iterations);
         for (Integer key : clustersList.keySet()) {
-//            System.out.println(clustersList.get(key).getGeneIDs());
-            System.out.println(clustersList.get(key).getGeneIDs().size());
+            System.out.println(clustersList.get(key).getGeneIDs());
+//            System.out.println(clustersList.get(key).getGeneIDs().size());
         }
 
         populateIncidenceMatrix(genesList);
@@ -121,8 +123,9 @@ public class KMeans {
      * @return list of static centroids
      */
     private ArrayList<Gene> getTestCentroids(ArrayList<Gene> genesList) {
-        int[] geneIDs = new int[]{1, 102, 263, 301, 344, 356, 394, 411, 474, 493};
+//        int[] geneIDs = new int[]{1, 102, 263, 301, 344, 356, 394, 411, 474, 493};
 //        int[] geneIDs = new int[]{158, 231, 12, 156, 175};
+          int[] geneIDs = new int[]{2,3};
 
         ArrayList<Gene> toReturn = new ArrayList<>();
         for(int i = 0; i < geneIDs.length; i++) {
