@@ -1,6 +1,7 @@
 package com.dm.clustering.data.pojo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -8,16 +9,19 @@ import java.util.List;
  */
 public class AgglomerativeCluster {
 
+
+    private int clusterId = 0;
     private List<AgglomerativeCluster> subClusters = null;
     private List<Gene> genes = null;
 
-    public  AgglomerativeCluster (Gene g)
+    public  AgglomerativeCluster (Gene g, int clusterId)
     {
-        level = 0;
-        genes = new ArrayList<>();
+        this.level = 0;
+        this.clusterId = clusterId;
+        this.genes = new ArrayList<>();
         genes.add(g);
     }
-    public AgglomerativeCluster (ClusterPair clusterPair)
+    public AgglomerativeCluster (ClusterPair clusterPair, int clusterId)
     {
         subClusters = new ArrayList<>();
         genes = new ArrayList<>();
@@ -28,10 +32,10 @@ public class AgglomerativeCluster {
         genes.addAll(subFirst.getGenes());
         genes.addAll(subSecond.getGenes());
         level = Math.max(subFirst.getLevel() , subSecond.getLevel());
+        this.clusterId = clusterId;
     }
 
     private int level;
-
 
     public int getLevel() {
         return level;
@@ -47,5 +51,12 @@ public class AgglomerativeCluster {
 
     public void setGenes(List<Gene> genes) {
         this.genes = genes;
+    }
+    public int getClusterId() {
+        return clusterId;
+    }
+
+    public void setClusterId(int clusterId) {
+        this.clusterId = clusterId;
     }
 }

@@ -7,10 +7,16 @@ public class ClusterPair {
 
     AgglomerativeCluster firstCluster = null;
     AgglomerativeCluster secondCluster = null;
+    double minDistance = Double.MAX_VALUE;
 
-    public ClusterPair(AgglomerativeCluster cluster1, AgglomerativeCluster cluster2) {
+
+
+    private int sampleCount = 0;
+    public ClusterPair(AgglomerativeCluster cluster1, AgglomerativeCluster cluster2, double minDist) {
         firstCluster = cluster1;
         secondCluster = cluster2;
+        minDistance = minDist;
+       // sampleCount = sampleCt;
     }
 
     public AgglomerativeCluster getFirstCluster() {
@@ -29,5 +35,18 @@ public class ClusterPair {
         this.secondCluster = secondCluster;
     }
 
+    public double getMinDistance() {
+        return minDistance;
+    }
 
+    public void setMinDistance(double minDistance) {
+        this.minDistance = minDistance;
+    }
+    public int getSampleCount() {
+        return sampleCount;
+    }
+
+    public void setSampleCount(int sampleCount) {
+        this.sampleCount = sampleCount;
+    }
 }
