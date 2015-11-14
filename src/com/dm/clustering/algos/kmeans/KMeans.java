@@ -21,8 +21,9 @@ public class KMeans {
      * @param genesList list of all the genes in the data set
      */
     public void executeKMeans(ArrayList<Gene> genesList) {
-        ArrayList<Gene> centroids = getInitialKCentroidsUsingKMeansPlusPlus(genesList);
+//        ArrayList<Gene> centroids = getInitialKCentroidsUsingKMeansPlusPlus(genesList);
 //        ArrayList<Gene> centroids = getTestCentroids(genesList);
+        ArrayList<Gene> centroids = getInitialKCentroids(genesList);
         clustersList = new HashMap<>();
 
         // create initial clusters
@@ -98,6 +99,26 @@ public class KMeans {
         InternalIndex internalIndex = new InternalIndex();
         System.out.println("Silhouette Coefficient: " + internalIndex.calculateSilhouetteCoefficient(clustersList,
                 genesList, Utility.GENE_MAP));
+    }
+
+    /**
+     * Get initial K centroids with the traditional method
+     * @param genesList list of all genes
+     * @return centroids
+     */
+    private ArrayList<Gene> getInitialKCentroids(ArrayList<Gene> genesList) {
+        Random random = new Random();
+        ArrayList<Gene> centroids = new ArrayList<>();
+        HashSet<Integer> selectedCentroidIndex = new HashSet<>();
+
+        while(centroids.size() < K) {
+            int index = random.nextInt(genesList.size());
+            if(!selectedCentroidIndex.contains(index)) {
+                selectedCentroidIndex.add(index);
+                centroids.add(genesList.get(index));
+            }
+        }
+        return centroids;
     }
 
     /**
