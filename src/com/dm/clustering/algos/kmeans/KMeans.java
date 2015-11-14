@@ -92,6 +92,8 @@ public class KMeans {
             System.out.println(clustersList.get(key).getGeneIDs());
 //            System.out.println(clustersList.get(key).getGeneIDs().size());
         }
+        Utility.writeCentroidsToFile(clustersList);
+        Utility.writeLabelsToFile(genesList);
 
         ExternalIndex externalIndex = new ExternalIndex(genesList);
         System.out.println("Rand Index: " + externalIndex.calculateRandIndex());

@@ -4,12 +4,13 @@ import com.dm.clustering.algos.agglomerative.AgglomerativeClustering;
 import com.dm.clustering.algos.kmeans.KMeans;
 import com.dm.clustering.data.pojo.Gene;
 import com.dm.clustering.data.reader.InputParser;
+import com.dm.clustering.utility.Utility;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    static final String FILE_PATH = "E:\\DM\\Project 2\\";
+    public static final String FILE_PATH = "E:\\DM\\Project 2\\";
 
     public static void main(String args[]) {
 
@@ -30,6 +31,7 @@ public class Main {
                 InputParser inputParser = new InputParser(FILE_PATH + fileName);
                 ArrayList<Gene> genesList = inputParser.parseData();
                 if (genesList.size() > 0) {
+                    Utility.writeGenesToFile(genesList);
                     long startTime = System.currentTimeMillis();
                     KMeans kMeans = new KMeans();
                     KMeans.K = numberOfClusters;
@@ -44,4 +46,25 @@ public class Main {
 
 
     }
+
+//    public static void main(String args[]) {
+//        int avg_iterations = 0;
+//        double avg_time = 0.0;
+//
+//        for (int i = 0; i < 20; i++) {
+//            InputParser inputParser = new InputParser(FILE_PATH);
+//            ArrayList<Gene> genesList = inputParser.parseData();
+//            if (genesList.size() > 0) {
+//                long startTime = System.currentTimeMillis();
+//                KMeans kMeans = new KMeans();
+//                KMeans.K = 6;
+//                kMeans.executeKMeans(genesList);
+//                avg_iterations += kMeans.iterations;
+//                avg_time += (System.currentTimeMillis() - startTime);
+////                System.out.println("Time taken: " + (System.currentTimeMillis() - startTime) + "ms");
+//            }
+//        }
+//        System.out.println("Average iterations = " + (avg_iterations / 20.0));
+//        System.out.println("Average time = " + (avg_time / 20.0));
+//    }
 }
