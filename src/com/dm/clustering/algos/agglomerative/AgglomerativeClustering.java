@@ -105,8 +105,8 @@ public class AgglomerativeClustering {
                 if (i == j)
                     continue;
                 AgglomerativeCluster temp2 = currentClusters.get(j);
-                //double distBetweenClusters = getDistBetweenClustersUsingSingleLink(temp1, temp2);
-                double distBetweenClusters = getDistBetweenClustersUsingCompleteLink(temp1, temp2);
+                double distBetweenClusters = getDistBetweenClustersUsingSingleLink(temp1, temp2);
+                //double distBetweenClusters = getDistBetweenClustersUsingCompleteLink(temp1, temp2);
                 if (distBetweenClusters < minDist) {
                     first = temp1;
                     second = temp2;
