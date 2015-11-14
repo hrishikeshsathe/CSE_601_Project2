@@ -30,8 +30,11 @@ public class Main {
                 InputParser inputParser = new InputParser(FILE_PATH + fileName);
                 ArrayList<Gene> genesList = inputParser.parseData();
                 if (genesList.size() > 0) {
+                    long startTime = System.currentTimeMillis();
                     KMeans kMeans = new KMeans();
+                    KMeans.K = numberOfClusters;
                     kMeans.executeKMeans(genesList);
+                    System.out.println("Time taken: " + (System.currentTimeMillis() - startTime) + "ms");
                 }
                 break;
             case "H":

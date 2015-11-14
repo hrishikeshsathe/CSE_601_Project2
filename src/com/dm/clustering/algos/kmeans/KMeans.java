@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 public class KMeans {
-    public static final int K = 5;
+    public static int K;
     HashMap<Integer, Cluster> clustersList;
 
     /**
